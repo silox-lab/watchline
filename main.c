@@ -1,7 +1,14 @@
+#include "./include/core/net_api.h"
 #include <stdio.h>
-#include "./include/core/db.h"
+#include <stdlib.h>
+#include <string.h>
 
 int main(void) {
-  init_db();
-  printf("db made.\n");
+
+  char ** interfaces = get_interfaces_name();
+
+  printf("%s\n", interfaces[0]);
+  
+  free(interfaces);
+  return 0;
 } 
