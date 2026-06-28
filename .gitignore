@@ -1,4 +1,4 @@
 tests/
 *.o
-main
 *.db
+main
