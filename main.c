@@ -1,7 +1,5 @@
-#include <stdio.h>
-#include "./include/core/db.h"
+#include "./tests/playground.h"
 
 int main(void) {
-  init_db();
-  printf("db made.\n");
+    play_test();
 } 
