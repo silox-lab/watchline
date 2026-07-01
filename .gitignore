@@ -3,3 +3,5 @@ tests/
 main
 *.db
 .VSCodeCounter
+build/
+commit_summary.txt

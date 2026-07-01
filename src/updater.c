@@ -7,6 +7,32 @@
 #include "../include/db.h"
 #include "../include/schema.h"
 
+/*
+get new network interfaces and insert them into database
+if they don't exist
+*/
+void if_insert_db(char **interfaces, sqlite3 *db) {
+    while (true) {
+        sleep(2);
+        for (int i = 0; interfaces[i] != NULL; i++) { 
+            char *if_name = interfaces[i];
+
+            IfDbStruct new_if = {.name = if_name}; // new interface that we want to add (if not exists)
+            IfDbStruct *check_if = db_get_interface(new_if, db); // check if interface already exists
+
+            if (check_if->name == NULL) { // it means that an interface with same name doesnt exist and this is new interface
+                db_make_interface(new_if, db);
+                free(check_if->name); // name is heap allocated
+                free(check_if);
+            }
+            free(if_name);
+            free(interfaces);
+
+            interfaces = get_interfaces_name(); // update the interfaces name for next iteration
+        }
+    }
+}
+
 /* thread 2: updater
 
 updater whole purpose is to run a series of instruction,
@@ -26,27 +52,10 @@ void *updater(void *args) {
     if (db_open != SQLITE_OK) {
         fprintf(stderr, "%s\n", sqlite3_errmsg(db));
     }
+
     char **interfaces = get_interfaces_name(); // every system network interfaces
-    while (true) {
-        sleep(2);
-        for (int i = 0; interfaces[i] != NULL; i++) { 
-            char *if_name = interfaces[i];
 
-            IfDbStruct new_if = {.name = if_name}; // new interface that we want to add (if not exists)
-            IfDbStruct *check_if = db_get_interface(new_if, db); // check if interface already exists
-
-            if (check_if->name == NULL) { // it means that an interface with same name doesnt exist and this is new interface
-                db_make_interface(new_if, db);
-                free(check_if->name); // name is heap allocated
-            }
-
-            free(if_name);
-            free(interfaces);
-            free(check_if);
-
-            interfaces = get_interfaces_name(); // update the interfaces name for next iteration
-        }
-    }
+    if_insert_db(interfaces, db);
 
     args = NULL;
     return args;
