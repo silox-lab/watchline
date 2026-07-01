@@ -1,5 +1,4 @@
 #include <sqlite3.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdbool.h>
@@ -44,15 +43,7 @@ get new network interfaces and insert them into database
 */
 void *updater(void *args) {
 
-    sqlite3 *db;
-    
-    char *db_path = "watchline.db";
-    int db_open = sqlite3_open(db_path, &db);
-
-    if (db_open != SQLITE_OK) {
-        fprintf(stderr, "%s\n", sqlite3_errmsg(db));
-    }
-
+    sqlite3 *db = open_db();
     char **interfaces = get_interfaces_name(); // every system network interfaces
 
     if_insert_db(interfaces, db);

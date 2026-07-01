@@ -7,5 +7,6 @@ void init_db();
 void db_make_table(char *table_sql, sqlite3 *db);
 void db_make_interface(IfDbStruct if_struct, sqlite3 *db);
 IfDbStruct *db_get_interface(IfDbStruct if_struct, sqlite3 *db);
+sqlite3 *open_db();
 
 #endif

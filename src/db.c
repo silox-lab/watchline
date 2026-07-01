@@ -1,9 +1,29 @@
+#include <linux/limits.h>
 #include <sqlite3.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include "../include/schema.h"
+#include <pwd.h>
+
+sqlite3 *open_db() {
+
+    sqlite3 *db;
+    char db_path[PATH_MAX];
+
+    struct passwd *pw = getpwuid(getuid()); // pw->pw_dir is /home/$USER
+
+    snprintf(db_path, PATH_MAX, "%s/watchline.db", pw->pw_dir);
+    int db_open = sqlite3_open(db_path, &db);
+
+    if (db_open != SQLITE_OK) {
+        fprintf(stderr, "%s\n", sqlite3_errmsg(db));
+    }
+    sqlite3_exec(db, "PRAGMA foreign_keys = ON;", NULL, NULL, NULL);
+
+    return db;
+}
 
 // get interface's rows, based on interface data provided.
 IfDbStruct *db_get_interface(IfDbStruct if_struct, sqlite3 *db) {
@@ -76,16 +96,8 @@ void db_make_table(char *table_sql, sqlite3 *db) {
 }
 
 void init_db() {
-    sqlite3 *db;
-
-    char *db_path = "watchline.db";
-    int db_open = sqlite3_open(db_path, &db);
-
-    if (db_open != SQLITE_OK) {
-        fprintf(stderr, "%s\n", sqlite3_errmsg(db));
-    }
-    sqlite3_exec(db, "PRAGMA foreign_keys = ON;", NULL, NULL, NULL);
-
+    
+    sqlite3 *db = open_db();
     db_make_table(TABLE_INTERFACES, db);
     db_make_table(TABLE_USAGE_RECORDS, db);
     
