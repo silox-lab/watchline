@@ -1,11 +1,30 @@
-main: main.o strings.o playground.o
-	gcc -o main main.o strings.o playground.o
+CC = gcc
+CFLAGS = -g -O0 -Wall -Wextra
+BUILD_DIR = build
 
-main.o: main.c ./lib/strings.h ./tests/playground.h
-	gcc -c main.c -o main.o
+$(BUILD_DIR)/main: \
+	$(BUILD_DIR)/main.o \
+	$(BUILD_DIR)/strings.o \
+	$(BUILD_DIR)/playground.o \
+	$(BUILD_DIR)/db.o \
+	$(BUILD_DIR)/updater.o \
+	$(BUILD_DIR)/net_api.o
+	$(CC) $(CFLAGS) -o $@ $^ -lsqlite3 -pthread
 
-strings.o: ./lib/strings.c ./lib/strings.h
-	gcc -c ./lib/strings.c
+$(BUILD_DIR)/main.o: main.c ./lib/strings.h ./tests/playground.h
+	$(CC) $(CFLAGS) -c $< -o $@
 
-playground.o: ./tests/playground.c ./tests/playground.h
-	gcc -c ./tests/playground.c
+$(BUILD_DIR)/strings.o: ./lib/strings.c ./lib/strings.h
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/playground.o: ./tests/playground.c ./tests/playground.h ./include/net_api.h ./include/db.h ./include/updater.h
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/net_api.o: ./src/net_api.c ./include/net_api.h
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/db.o: ./src/db.c ./include/db.h ./include/schema.h
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/updater.o: ./src/updater.c ./include/updater.h ./include/net_api.h
+	$(CC) $(CFLAGS) -c $< -o $@
