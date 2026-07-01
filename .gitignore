@@ -1,5 +1,6 @@
 tests/
 *.o
+*.db
 main
 *.db
 .VSCodeCounter
