@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include "../../include/storage/schema.h"
+#include "../include/schema.h"
 
 // get interface's rows, based on interface data provided.
 IfDbStruct *db_get_interface(IfDbStruct if_struct, sqlite3 *db) {

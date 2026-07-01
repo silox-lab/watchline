@@ -3,9 +3,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdbool.h>
-#include "../../include/core/net_api.h"
-#include "../../include/storage/db.h"
-#include "../../include/storage/schema.h"
+#include "../include/net_api.h"
+#include "../include/db.h"
+#include "../include/schema.h"
 
 /* thread 2: updater
 
